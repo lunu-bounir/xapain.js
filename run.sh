@@ -13,11 +13,17 @@ popd
 git clone https://github.com/xapian/xapian
 ./xapian/bootstrap
 
+pwd
+ls ./xapian/xapian-core/include/xapian/
+
 # make libxapian.a
 pushd xapian/xapian-core
 emconfigure ./configure CPPFLAGS='-DFLINTLOCK_USE_FLOCK' CXXFLAGS='-Oz -s USE_ZLIB=1' --disable-backend-remote
 emmake make
 popd
+
+pwd
+ls ./xapian/xapian-core/.libs/
 
 # xapian.js (compatible with WebExtension; no wasm code)
 em++ -Oz \
