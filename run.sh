@@ -2,6 +2,8 @@
 
 git clone https://github.com/xapian/xapian
 
+./xapian/bootstrap
+
 pushd xapian/xapian-core
 ls
 pwd
