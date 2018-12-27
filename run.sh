@@ -5,8 +5,6 @@ git clone https://github.com/xapian/xapian
 ./xapian/bootstrap
 
 pushd xapian/xapian-core
-ls
-pwd
 emconfigure ./configure CPPFLAGS='-DFLINTLOCK_USE_FLOCK' CXXFLAGS='-Oz -s USE_ZLIB=1' --disable-backend-remote
 emmake make
 popd
