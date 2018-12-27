@@ -1,13 +1,7 @@
 #! /bin/bash
 
 # install m4
-wget -O m4-1.4.9.tar.gz http://ftp.gnu.org/gnu/m4/m4-1.4.9.tar.gz
-tar -zvxf m4-1.4.9.tar.gz
-pushd m4-1.4.9
-./configure
-make
-sudo make install
-popd
+sudo apt-get install m4
 
 # prepare
 git clone https://github.com/xapian/xapian
