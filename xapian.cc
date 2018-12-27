@@ -88,7 +88,7 @@ extern "C" int percent(int index) {
 
 extern "C" const char* snippet(const char* lang, const char* text, size_t length, const char* omit) {
   Xapian::Stem stemmer(lang);
-  const string str = matches.snippet(text, length, stemmer, matches.SNIPPET_BACKGROUND_MODEL, "<b>", "</b>", omit);
+  const string str = matches.snippet(text, length, stemmer, matches.SNIPPET_EXHAUSTIVE, "<b>", "</b>", omit);
   return cstr(str);
 }
 
