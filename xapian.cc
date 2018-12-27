@@ -3,16 +3,6 @@
 #include <xapian.h>
 #include <emscripten.h>
 
-
-
-
-
-
-#include <iostream>
-
-
-
-
 using namespace std;
 
 Xapian::WritableDatabase db("database", Xapian::DB_CREATE_OR_OPEN);
