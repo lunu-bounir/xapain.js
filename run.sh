@@ -1,6 +1,7 @@
 #! /bin/bash
 
 # install m4
+apt-get update
 apt-get install m4
 
 # prepare
