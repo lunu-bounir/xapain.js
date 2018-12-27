@@ -27,4 +27,4 @@ em++ -Oz \
   -I./$name \
   -I./$name/include \
   -I./$name/common \
-  xapian.cc ./$name/.libs/libxapian.a -o xapian.js
+  xapian.cc ./$name/.libs/libxapian.so -o xapian.js
