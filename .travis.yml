@@ -15,6 +15,7 @@ deploy:
   file:
     - xapian.js
     - xapian.js.mem
+  skip_cleanup: true
   on:
     tags: true
   overwrite: true
