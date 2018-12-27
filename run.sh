@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # install m4
-sudo apt-get install m4
+apt-get install m4
 
 # prepare
 git clone https://github.com/xapian/xapian
