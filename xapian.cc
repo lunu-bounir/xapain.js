@@ -31,8 +31,11 @@ extern "C" void add(
   const char* lang,
   const char* hostname,
   const char* url,
+  const char* date,
+  const char* filename,
   const char* mime,
   const char* title,
+  const bool include,
   const char* body
 ) {
   Xapian::TermGenerator indexer;
@@ -51,6 +54,9 @@ extern "C" void add(
   indexer.index_text(title, 1, "S");
   indexer.index_text(mime, 1, "T");
   indexer.index_text(url, 1, "U");
+  indexer.index_text(date, 1, "D");
+  indexer.index_text(filename, 1, "F");
+  indexer.index_text(include, 1, "I");
 
   // Index fields without prefixes for general search.
   indexer.index_text(url);
