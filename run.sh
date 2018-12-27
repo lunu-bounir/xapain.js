@@ -12,10 +12,6 @@ emconfigure ./configure CPPFLAGS='-DFLINTLOCK_USE_FLOCK' CXXFLAGS='-Oz -s USE_ZL
 emmake make
 popd
 
-echo ./$name/.libs/
-pwd ./$name/.libs/
-ls ./$name/.libs/
-
 # xapian.js (compatible with WebExtension; no wasm code)
 em++ -Oz \
   -s NO_DYNAMIC_EXECUTION=1 \
