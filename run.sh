@@ -1,21 +1,13 @@
 #! /bin/bash
 
-# install m4
-wget -O m4-1.4.9.tar.gz http://ftp.gnu.org/gnu/m4/m4-1.4.9.tar.gz
-tar -zxf m4-1.4.9.tar.gz
-pushd m4-1.4.9
-./configure && make && make install
-popd
+version="1.4.9"
+name="xapian-core-$version"
 
-# prepare
-git clone https://github.com/xapian/xapian
-./xapian/bootstrap
-
-#?
-mv error.h ./xapian/xapian-core/include/xapian/
+wget https://oligarchy.co.uk/xapian/$version/$name.tar.xz
+tar -xf $name.tar.xz
 
 # make libxapian.a
-pushd xapian/xapian-core
+pushd $name
 emconfigure ./configure CPPFLAGS='-DFLINTLOCK_USE_FLOCK' CXXFLAGS='-Oz -s USE_ZLIB=1' --disable-backend-remote
 emmake make
 popd
@@ -28,7 +20,7 @@ em++ -Oz \
   -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
   -s EXPORTED_FUNCTIONS='["_key", "_add", "_query", "_percent", "_languages", "_snippet"]' \
   -std=c++11 \
-  -I./xapian/xapian-core \
-  -I./xapian/xapian-core/include \
-  -I./xapian/xapian-core/common \
-  xapian.cc ./xapian/xapian-core/.libs/libxapian.a -o xapian.js
+  -I./$name \
+  -I./$name/include \
+  -I./$name/common \
+  xapian.cc ./$name/.libs/libxapian.a -o xapian.js
