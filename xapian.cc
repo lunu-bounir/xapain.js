@@ -1,6 +1,17 @@
 #include <cstdlib>
+#include <sstream>
 #include <xapian.h>
 #include <emscripten.h>
+
+
+
+
+
+
+#include <iostream>
+
+
+
 
 using namespace std;
 
@@ -27,7 +38,7 @@ inline const char* cstr(const string& message) {
 }
 
 extern "C" void add(
-  const char* key, // uniQue id (to retrieve the actual content)
+  const char* key, // uniQue id (to retrieve the actual content from JS side)
   const char* lang,
   const char* hostname,
   const char* url,
@@ -35,7 +46,8 @@ extern "C" void add(
   const char* filename,
   const char* mime,
   const char* title,
-  const bool include,
+  const char* keywords,
+  const char* description,
   const char* body
 ) {
   Xapian::TermGenerator indexer;
@@ -56,12 +68,23 @@ extern "C" void add(
   indexer.index_text(url, 1, "U");
   indexer.index_text(date, 1, "D");
   indexer.index_text(filename, 1, "F");
-  indexer.index_text(include, 1, "I");
+  indexer.index_text(lang, 1, "L");
+  indexer.index_text(description, 1, "D");
+
+  std::stringstream ss(keywords);
+  std::string keyword;
+  if (keywords != NULL) {
+    while (std::getline(ss, keyword,',')) {
+      indexer.index_text(keyword, 1, "K");
+    }
+  }
 
   // Index fields without prefixes for general search.
   indexer.index_text(url);
   indexer.increase_termpos();
   indexer.index_text(title);
+  indexer.increase_termpos();
+  indexer.index_text(filename);
   indexer.increase_termpos();
   indexer.index_text(body);
 
@@ -100,6 +123,11 @@ extern "C" const char* query(const char* lang, const char* querystring, int offs
   qp.add_prefix("title", "S");
   qp.add_prefix("mime", "T");
   qp.add_prefix("url", "U");
+  qp.add_prefix("date", "D");
+  qp.add_prefix("filename", "F");
+  qp.add_prefix("language", "L");
+  qp.add_prefix("keyword", "K");
+  qp.add_prefix("description", "D");
 
   // parse the query
   Xapian::Query query = qp.parse_query(querystring);
