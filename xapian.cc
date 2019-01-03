@@ -3,21 +3,19 @@
 #include <xapian.h>
 #include <emscripten.h>
 
-using namespace std;
-
-Xapian::WritableDatabase db("database", Xapian::DB_CREATE_OR_OPEN);
-Xapian::MSet matches;
-
 struct Result {
-  double rank;
-  double weight;
-  string data;
+  const double rank;
+  const double weight;
+  const std::string data;
 };
+
+Xapian::WritableDatabase db;
+Xapian::MSet matches;
 Result* results;
 
 // maximum length of a returned string
-auto buffer = (char*) malloc(500);
-inline const char* cstr(const string& message) {
+const auto buffer = (char*) malloc(500);
+inline const char* cstr(const std::string& message) {
   const int len = EM_ASM_INT({
     return Math.max($0, 500);
   }, 500);
@@ -27,8 +25,18 @@ inline const char* cstr(const string& message) {
   return buffer;
 }
 
+extern "C" void prepare(const char* path) {
+  const Xapian::WritableDatabase _db(path, Xapian::DB_CREATE_OR_OPEN);
+  db = _db;
+}
+
+// Commit any pending modifications made to the database.
+extern "C" void commit() {
+  db.commit();
+}
+
 extern "C" void add(
-  const char* key, // uniQue id (to retrieve the actual content from JS side)
+  const char* uniQue, // uniQue id (to retrieve the actual content from JS side)
   const char* lang,
   const char* hostname,
   const char* url,
@@ -42,13 +50,13 @@ extern "C" void add(
 ) {
   Xapian::TermGenerator indexer;
 
-  Xapian::Stem stemmer(lang);
+  const Xapian::Stem stemmer(lang);
   indexer.set_stemmer(stemmer);
   indexer.set_stemming_strategy(indexer.STEM_SOME_FULL_POS);
 
   Xapian::Document doc;
   indexer.set_document(doc);
-  doc.set_data(key);
+  doc.set_data(uniQue);
 
   // https://xapian.org/docs/omega/termprefixes.html
   // Index each field with a suitable prefix.
@@ -64,7 +72,7 @@ extern "C" void add(
   std::stringstream ss(keywords);
   std::string keyword;
   if (keywords != NULL) {
-    while (std::getline(ss, keyword,',')) {
+    while (std::getline(ss, keyword, ',')) {
       indexer.index_text(keyword, 1, "K");
     }
   }
@@ -78,7 +86,16 @@ extern "C" void add(
   indexer.increase_termpos();
   indexer.index_text(body);
 
-  db.add_document(doc);
+  // We use the identifier to ensure each object ends up in the
+  // database only once no matter how many times we run the indexer.
+  const std::string term = 'Q' + std::string(uniQue);
+  doc.add_boolean_term(term);
+  db.replace_document(term, doc);
+}
+
+extern "C" void clean(const char* uniQue) {
+  const std::string term = 'Q' + std::string(uniQue);
+  db.delete_document(term);
 }
 
 extern "C" int percent(int index) {
@@ -87,13 +104,13 @@ extern "C" int percent(int index) {
 }
 
 extern "C" const char* snippet(const char* lang, const char* text, size_t length, const char* omit) {
-  Xapian::Stem stemmer(lang);
-  const string str = matches.snippet(text, length, stemmer, matches.SNIPPET_EXHAUSTIVE, "<b>", "</b>", omit);
+  const Xapian::Stem stemmer(lang);
+  const std::string str = matches.snippet(text, length, stemmer, matches.SNIPPET_EXHAUSTIVE, "<b>", "</b>", omit);
   return cstr(str);
 }
 
 extern "C" const char* key(int index) {
-  const string str = matches[index].get_document().get_data();
+  const std::string str = matches[index].get_document().get_data();
   return cstr(str);
 }
 
@@ -103,12 +120,12 @@ extern "C" const char* query(const char* lang, const char* querystring, int offs
 
   // Parse the query string to produce a Xapian::Query object.
   Xapian::QueryParser qp;
-  Xapian::Stem stemmer(lang);
+  const Xapian::Stem stemmer(lang);
   qp.set_stemmer(stemmer);
   qp.set_database(db);
   qp.set_stemming_strategy(Xapian::QueryParser::STEM_SOME);
 
-  // Start of prefix configuration.
+  // prefix configuration.
   qp.add_prefix("hostname", "H");
   qp.add_prefix("title", "S");
   qp.add_prefix("mime", "T");
@@ -120,18 +137,18 @@ extern "C" const char* query(const char* lang, const char* querystring, int offs
   qp.add_prefix("description", "D");
 
   // parse the query
-  Xapian::Query query = qp.parse_query(querystring);
+  const Xapian::Query query = qp.parse_query(querystring);
 
   // Find results for the query.
   enquire.set_query(query);
   matches = enquire.get_mset(offset, pagesize);
 
-  const string str = to_string(matches.size()) + '/' + to_string(matches.get_matches_estimated());
+  const std::string str = std::to_string(matches.size()) + '/' + std::to_string(matches.get_matches_estimated());
   return cstr(str);
 }
 
 extern "C" const char* languages() {
-  Xapian::Stem stemmer("none");
-  const string str = stemmer.get_available_languages();
+  const Xapian::Stem stemmer("none");
+  const std::string str = stemmer.get_available_languages();
   return cstr(str);
 }
