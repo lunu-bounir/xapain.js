@@ -137,7 +137,7 @@ extern "C" const char* query(const char* lang, const char* querystring, int offs
   qp.add_prefix("description", "D");
 
   // parse the query
-  const Xapian::Query query = qp.parse_query(querystring);
+  const Xapian::Query query = qp.parse_query(querystring, Xapian::QueryParser::FLAG_PARTIAL);
 
   // Find results for the query.
   enquire.set_query(query);
