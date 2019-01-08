@@ -114,7 +114,15 @@ extern "C" const char* key(int index) {
   return cstr(str);
 }
 
-extern "C" const char* query(const char* lang, const char* querystring, int offset, int pagesize) {
+extern "C" const char* query(
+  const char* lang,
+  const char* querystring,
+  int offset,
+  int pagesize,
+  bool partial,
+  bool spell_correction,
+  bool synonym
+) {
   // Start an enquire session.
   Xapian::Enquire enquire(db);
 
@@ -137,7 +145,17 @@ extern "C" const char* query(const char* lang, const char* querystring, int offs
   qp.add_prefix("description", "D");
 
   // parse the query
-  const Xapian::Query query = qp.parse_query(querystring, Xapian::QueryParser::FLAG_PARTIAL);
+  unsigned flags = Xapian::QueryParser::FLAG_DEFAULT;
+  if (partial) {
+    flags = flags|Xapian::QueryParser::FLAG_PARTIAL|Xapian::QueryParser::FLAG_WILDCARD;
+  }
+  if (spell_correction) {
+    flags |= Xapian::QueryParser::FLAG_SPELLING_CORRECTION;
+  }
+  if (synonym) {
+    flags |= Xapian::QueryParser::FLAG_SYNONYM;
+  }
+  const Xapian::Query query = qp.parse_query(querystring, flags);
 
   // Find results for the query.
   enquire.set_query(query);
