@@ -119,9 +119,10 @@ extern "C" const char* query(
   const char* querystring,
   int offset,
   int pagesize,
-  bool partial,
-  bool spell_correction,
-  bool synonym
+  bool partial, // searching flag
+  bool spell_correction, // searching flag
+  bool synonym, // searching flag
+  bool descending // ordering
 ) {
   // Start an enquire session.
   Xapian::Enquire enquire(db);
@@ -158,6 +159,9 @@ extern "C" const char* query(
   const Xapian::Query query = qp.parse_query(querystring, flags);
 
   // Find results for the query.
+  if (descending) {
+    enquire.set_docid_order(enquire.DESCENDING);
+  }
   enquire.set_query(query);
   matches = enquire.get_mset(offset, pagesize);
 
