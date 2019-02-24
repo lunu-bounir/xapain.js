@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <sstream>
+#include <vector>
 #include <xapian.h>
 #include <emscripten.h>
 
@@ -9,7 +10,7 @@ struct Result {
   const std::string data;
 };
 
-Xapian::WritableDatabase db;
+std::vector<Xapian::WritableDatabase> dbs;
 Xapian::MSet matches;
 Result* results;
 
@@ -25,17 +26,18 @@ inline const char* cstr(const std::string& message) {
   return buffer;
 }
 
-extern "C" void prepare(const char* path) {
+extern "C" void prepare(const int index, const char* path) {
   const Xapian::WritableDatabase _db(path, Xapian::DB_CREATE_OR_OPEN);
-  db = _db;
+  dbs.insert(dbs.begin() + index, _db);
 }
 
 // Commit any pending modifications made to the database.
-extern "C" void commit() {
-  db.commit();
+extern "C" void commit(const int index) {
+  dbs[index].commit();
 }
 
 extern "C" void add(
+  const int index, // database index
   const char* uniQue, // uniQue id (to retrieve the actual content from JS side)
   const char* lang,
   const char* hostname,
@@ -90,12 +92,12 @@ extern "C" void add(
   // database only once no matter how many times we run the indexer.
   const std::string term = 'Q' + std::string(uniQue);
   doc.add_boolean_term(term);
-  db.replace_document(term, doc);
+  dbs[index].replace_document(term, doc);
 }
 
-extern "C" void clean(const char* uniQue) {
+extern "C" void clean(const int index, const char* uniQue) {
   const std::string term = 'Q' + std::string(uniQue);
-  db.delete_document(term);
+  dbs[index].delete_document(term);
 }
 
 extern "C" int percent(int index) {
@@ -115,6 +117,7 @@ extern "C" const char* key(int index) {
 }
 
 extern "C" const char* query(
+  const int index,
   const char* lang,
   const char* querystring,
   int offset,
@@ -125,13 +128,13 @@ extern "C" const char* query(
   bool descending // ordering
 ) {
   // Start an enquire session.
-  Xapian::Enquire enquire(db);
+  Xapian::Enquire enquire(dbs[index]);
 
   // Parse the query string to produce a Xapian::Query object.
   Xapian::QueryParser qp;
   const Xapian::Stem stemmer(lang);
   qp.set_stemmer(stemmer);
-  qp.set_database(db);
+  qp.set_database(dbs[index]);
   qp.set_stemming_strategy(Xapian::QueryParser::STEM_SOME);
 
   // prefix configuration.
