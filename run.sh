@@ -1,6 +1,6 @@
 #! /bin/bash
 
-version="1.4.9"
+version="1.4.10"
 name="xapian-core-$version"
 
 wget https://oligarchy.co.uk/xapian/$version/$name.tar.xz
