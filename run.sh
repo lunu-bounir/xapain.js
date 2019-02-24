@@ -1,6 +1,6 @@
 #! /bin/bash
 
-version="1.4.9"
+version="1.4.10"
 name="xapian-core-$version"
 
 wget https://oligarchy.co.uk/xapian/$version/$name.tar.xz
@@ -17,7 +17,7 @@ em++ -Oz \
   -s NO_DYNAMIC_EXECUTION=1 \
   -s USE_ZLIB=1 \
   -s WASM=0 \
-  -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
+  -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "Pointer_stringify"]' \
   -s EXPORTED_FUNCTIONS='["_prepare", "_commit", "_key", "_add", "_clean", "_query", "_percent", "_languages", "_snippet"]' \
   -std=c++11 \
   -I./$name \
