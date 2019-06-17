@@ -18,7 +18,7 @@ em++ -Oz \
   -s USE_ZLIB=1 \
   -s WASM=0 \
   -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
-  -s EXPORTED_FUNCTIONS='["_prepare", "_commit", "_key", "_add", "_clean", "_query", "_percent", "_languages", "_snippet", "_compact", "_close"]' \
+  -s EXPORTED_FUNCTIONS='["_prepare", "_commit", "_key", "_add", "_clean", "_query", "_percent", "_languages", "_snippet", "_compact", "_release"]' \
   -std=c++11 \
   -I./$name \
   -I./$name/include \
