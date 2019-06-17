@@ -179,9 +179,25 @@ extern "C" const char* languages() {
 }
 
 extern "C" void compact(const int index, const char* path) {
-  dbs[index].compact(path);
+  dbs[index].commit();
+  dbs[index].compact("/tmp_database");
+  dbs[index].close();
+
+  EM_ASM({
+    const path = UTF8ToString($0);
+    FS.readdir('/tmp_database/').filter(function(n) {
+      return n.startsWith('.') === false;
+    }).forEach(function(name) {
+      FS.writeFile(path + '/' + name, FS.readFile('/tmp_database/' + name));
+      FS.unlink('/tmp_database/' + name);
+    });
+    FS.rmdir('/tmp_database');
+  }, path);
+
+  prepare(index, path);
 }
 
 extern "C" void release(const int index) {
+  dbs[index].commit();
   dbs[index].close();
 }
