@@ -177,3 +177,7 @@ extern "C" const char* languages() {
   const std::string str = stemmer.get_available_languages();
   return cstr(str);
 }
+
+extern "C" void compact(const int index, const char* path) {
+  dbs[index].compact(path);
+}
