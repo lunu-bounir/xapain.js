@@ -181,3 +181,6 @@ extern "C" const char* languages() {
 extern "C" void compact(const int index, const char* path) {
   dbs[index].compact(path);
 }
+extern "C" void close(const int index) {
+  dbs[index].close();
+}
