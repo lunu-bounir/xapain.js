@@ -166,7 +166,12 @@ extern "C" const char* query(
     enquire.set_docid_order(enquire.DESCENDING);
   }
   enquire.set_query(query);
-  matches = enquire.get_mset(offset, pagesize);
+  try {
+    matches = enquire.get_mset(offset, pagesize);
+  }
+  catch (const Xapian::Error& e) {
+    return cstr("Error: " + e.get_msg());
+  }
 
   const std::string str = std::to_string(matches.size()) + '/' + std::to_string(matches.get_matches_estimated());
   return cstr(str);
