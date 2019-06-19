@@ -19,6 +19,7 @@ em++ -Oz \
   -s WASM=0 \
   -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
   -s EXPORTED_FUNCTIONS='["_prepare", "_commit", "_key", "_add", "_clean", "_query", "_percent", "_languages", "_snippet", "_compact", "_release"]' \
+  -s DISABLE_EXCEPTION_CATCHING=0 \
   -std=c++11 \
   -I./$name \
   -I./$name/include \
