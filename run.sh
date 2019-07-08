@@ -2,6 +2,7 @@
 
 version="1.4.10"
 name="xapian-core-$version"
+exports='["_prepare", "_commit", "_key", "_add", "_clean", "_query", "_percent", "_languages", "_snippet", "_compact", "_release"]'
 
 wget https://oligarchy.co.uk/xapian/$version/$name.tar.xz
 tar -xf $name.tar.xz
@@ -12,18 +13,35 @@ emconfigure ./configure CPPFLAGS='-DFLINTLOCK_USE_FLOCK' CXXFLAGS='-Oz -s USE_ZL
 emmake make
 popd
 
-# xapian.js (compatible with WebExtension; no wasm code)
-em++ -Oz \
-  -s NO_DYNAMIC_EXECUTION=1 \
+FLAGS=(-Oz \
   -s USE_ZLIB=1 \
-  -s WASM=0 \
   -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
   -s EXPORTED_FUNCTIONS='["_prepare", "_commit", "_key", "_add", "_clean", "_query", "_percent", "_languages", "_snippet", "_compact", "_release"]' \
-  -s DISABLE_EXCEPTION_CATCHING=0 \
   -std=c++11 \
   -I./$name \
   -I./$name/include \
-  -I./$name/common \
-  xapian.cc ./$name/.libs/libxapian.so -o xapian.js
+  -I./$name/common)
+
+# with exceptions and no wasm
+em++ "${FLAGS[@]}" \
+  -s NO_DYNAMIC_EXECUTION=1 \
+  -s WASM=0 \
+  -s DISABLE_EXCEPTION_CATCHING=0 \
+  xapian.cc ./$name/.libs/libxapian.so -o xapian_exception_nowasm.js
+
+# without exceptions and no wasm
+em++ "${FLAGS[@]}" \
+  -s NO_DYNAMIC_EXECUTION=1 \
+  -s WASM=0 \
+  xapian.cc ./$name/.libs/libxapian.so -o xapian_noexception_nowasm.js
+
+# with exceptions and wasm
+em++ "${FLAGS[@]}" \
+  -s DISABLE_EXCEPTION_CATCHING=0 \
+  xapian.cc ./$name/.libs/libxapian.so -o xapian_exception_wasm.js
+
+# without exceptions and wasm
+em++ "${FLAGS[@]}" \
+  xapian.cc ./$name/.libs/libxapian.so -o xapian_noexception_wasm.js
 
 ls

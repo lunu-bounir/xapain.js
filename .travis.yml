@@ -13,8 +13,14 @@ deploy:
   api_key:
     secure: JZy9UPsRLlrYYB4684RIC8SgZjSiJubsDXL1cZKueyvUSAKgf38LKf1E+hj7xNOcTWX5SCwHFHQPYcP8aO3dbq9qDcD8igIpcugK8cv5CUs/32AaB0KPhRkr6xaAQ0gLrvIlvvsrrfpoOdeODjGQIB8eIyU+74upr34ejc6xnlmBMNO+wriJA6BDz6tAnJ73rpwMumyD58ymj9RIjWjSMrlyairgvcB5/4P27OzBxeRE/L/ScyYE3W96FRLz5k/kntvyIRb29K2rHAq3+a5IHMaLYWtbDY1d3tw2o4FPHrKt7w20icViP3sV/2NLMrdq05dBo6pD7uECTG9qitBW4qlWlsW7cEPWGPoqXrd6uaE5Ag1IqDKytyHzW3CJK+voTaHoiacQCVDTOP4QZ6Arkh6HH9+1GFoO1o50kSweomdmPqFv0tABPYW1OGodWcjgvOjnIVxCckj0dxFyDJD1qjibZ2erJYkKKE4pS/qHLo0TBj8HwosWkmOSciHOBOD9liVeL6cwusaRkzRraoarGHH9qvPfwe95b8tfYOJIr8fNfaJh7lUKrgmocMTH63VGPEyYgmyZXltGJp9BtFS9Bkm24jY+j5E5vrGKWkcOEOweXiqSnZUNaXUhqkPJyS5lBKuNn+hYSVEMEoT+m4WZbf2JDV7WAAK/PQxBAl5WKHo=
   file:
-    - xapian.js
-    - xapian.js.mem
+    - xapian_exception_wasm.js
+    - xapian_exception_wasm.wasm
+    - xapian_noexception_nowasm.js
+    - xapian_noexception_nowasm.js.mem
+    - xapian_exception_nowasm.js
+    - xapian_exception_nowasm.js.mem
+    - xapian_noexception_wasm.js
+    - xapian_noexception_wasm.wasm
   skip_cleanup: true
   on:
     tags: true
