@@ -2,9 +2,9 @@ notifications:
   email: false
 sudo: required
 services:
-- docker
+  - docker
 before_install:
-- docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten
+  - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten bash
 script:
 - docker exec -it emscripten ./run.sh
 deploy:
