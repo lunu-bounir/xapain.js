@@ -21,6 +21,14 @@ deploy:
     - xapian_exception_nowasm.js.mem
     - xapian_noexception_wasm.js
     - xapian_noexception_wasm.wasm
+    - xapian_exception_wasm_db.js
+    - xapian_exception_wasm_db.wasm
+    - xapian_noexception_nowasm_db.js
+    - xapian_noexception_nowasm_db.js.mem
+    - xapian_exception_nowasm_db.js
+    - xapian_exception_nowasm_db.js.mem
+    - xapian_noexception_wasm_db.js
+    - xapian_noexception_wasm_db.wasm
   skip_cleanup: true
   on:
     tags: true

@@ -29,19 +29,45 @@ em++ "${FLAGS[@]}" \
   -s DISABLE_EXCEPTION_CATCHING=0 \
   xapian.cc ./$name/.libs/libxapian.so -o xapian_exception_nowasm.js
 
+# with exceptions and no wasm with indexedDB support
+em++ "${FLAGS[@]}" \
+  -s NO_DYNAMIC_EXECUTION=1 \
+  -s WASM=0 \
+  -s DISABLE_EXCEPTION_CATCHING=0 \
+  -lidbfs.js \
+  xapian.cc ./$name/.libs/libxapian.so -o xapian_exception_nowasm_db.js
+
 # without exceptions and no wasm
 em++ "${FLAGS[@]}" \
   -s NO_DYNAMIC_EXECUTION=1 \
   -s WASM=0 \
   xapian.cc ./$name/.libs/libxapian.so -o xapian_noexception_nowasm.js
 
+# without exceptions and no wasm with indexedDB support
+em++ "${FLAGS[@]}" \
+  -s NO_DYNAMIC_EXECUTION=1 \
+  -s WASM=0 \
+  -lidbfs.js \
+  xapian.cc ./$name/.libs/libxapian.so -o xapian_noexception_nowasm_db.js
+
 # with exceptions and wasm
 em++ "${FLAGS[@]}" \
   -s DISABLE_EXCEPTION_CATCHING=0 \
   xapian.cc ./$name/.libs/libxapian.so -o xapian_exception_wasm.js
 
+# with exceptions and wasm with indexedDB support
+em++ "${FLAGS[@]}" \
+  -s DISABLE_EXCEPTION_CATCHING=0 \
+  -lidbfs.js \
+  xapian.cc ./$name/.libs/libxapian.so -o xapian_exception_wasm_db.js
+
 # without exceptions and wasm
 em++ "${FLAGS[@]}" \
   xapian.cc ./$name/.libs/libxapian.so -o xapian_noexception_wasm.js
+
+# without exceptions and wasm with indexedDB support
+em++ "${FLAGS[@]}" \
+  -lidbfs.js \
+  xapian.cc ./$name/.libs/libxapian.so -o xapian_noexception_wasm_db.js
 
 ls
