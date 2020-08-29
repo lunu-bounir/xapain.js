@@ -1,6 +1,6 @@
 #! /bin/bash
 
-version="1.4.15"
+version="1.4.17"
 name="xapian-core-$version"
 exports='["_prepare", "_commit", "_key", "_add", "_clean", "_query", "_percent", "_languages", "_snippet", "_compact", "_release"]'
 
