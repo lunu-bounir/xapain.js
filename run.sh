@@ -14,6 +14,7 @@ emmake make
 popd
 
 FLAGS=(-Oz \
+  -s ALLOW_MEMORY_GROWTH=1
   -s USE_ZLIB=1 \
   -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
   -s EXPORTED_FUNCTIONS='["_prepare", "_commit", "_key", "_add", "_clean", "_query", "_percent", "_languages", "_snippet", "_compact", "_release"]' \
