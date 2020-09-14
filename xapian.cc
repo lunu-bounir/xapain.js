@@ -152,7 +152,6 @@ extern "C" const char* query(
   unsigned flags = Xapian::QueryParser::FLAG_DEFAULT;
   if (partial) {
     flags = flags|Xapian::QueryParser::FLAG_PARTIAL|Xapian::QueryParser::FLAG_WILDCARD;
-    QueryParser::set_database(dbs[index]);
   }
   if (spell_correction) {
     flags |= Xapian::QueryParser::FLAG_SPELLING_CORRECTION;
